@@ -24,7 +24,7 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -36,7 +36,12 @@ export default function SignupPage() {
     if (error) {
       setError(error.message);
       setLoading(false);
+    } else if (data.session) {
+      // Email confirmation disabled — session created immediately
+      router.push('/onboarding');
+      router.refresh();
     } else {
+      // Email confirmation required — show check email screen
       setSent(true);
     }
   }
