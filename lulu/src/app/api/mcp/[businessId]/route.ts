@@ -73,12 +73,11 @@ export async function POST(
   const response = await handleMcpRequest(mcpRequest, business, connectors ?? []);
 
   // 8. Log registry query count (fire and forget)
-  supabase
+  void supabase
     .from('registry')
     .update({ total_queries: supabase.rpc('increment') })
     .eq('business_id', business.id)
-    .then(() => {})
-    .catch(() => {});
+    .then(() => {}, () => {});
 
   return NextResponse.json(response, {
     headers: {
