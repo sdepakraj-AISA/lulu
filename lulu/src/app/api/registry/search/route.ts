@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
       agent_name: agentName,
       query_text: query || null,
     }))
-  ).then(() => {}).catch(() => {});
+  ).then(() => {}, () => {});
 
   const result: RegistrySearchResult = {
     businesses: (data ?? []).map((entry) => ({

@@ -152,7 +152,7 @@ async function handleToolCall(
     tool_called: name,
     response_ms: Date.now() - start,
     success,
-  }).then(() => {}).catch(() => {});
+  }).then(() => {}, () => {});
 
   return mcpOk(id, {
     content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
