@@ -64,7 +64,7 @@ export default function OnboardingPage() {
   const DAY_LABELS: Record<string, string> = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
  
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12 text-gray-900">
       <div className="max-w-lg w-full">
  
         {/* Header */}
@@ -111,47 +111,47 @@ export default function OnboardingPage() {
                 <div>
                   <label className="text-sm font-medium text-gray-700 block mb-1">Business name *</label>
                   <input value={form.name} onChange={(e) => set('name', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                     placeholder="Maple Street Bakery" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 block mb-1">Description *</label>
                   <textarea value={form.description} onChange={(e) => set('description', e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                     placeholder="We're a family-owned bakery specializing in sourdough and pastries…" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-sm font-medium text-gray-700 block mb-1">Phone</label>
                     <input value={form.phone} onChange={(e) => set('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                       placeholder="+1 416 555 0100" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 block mb-1">Email</label>
                     <input type="email" value={form.email} onChange={(e) => set('email', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                       placeholder="hello@mybusiness.com" />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 block mb-1">Website</label>
                   <input value={form.website} onChange={(e) => set('website', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                     placeholder="https://mybusiness.com" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-sm font-medium text-gray-700 block mb-1">City</label>
                     <input value={form.address.city} onChange={(e) => setAddress('city', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                       placeholder="Toronto" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 block mb-1">Province</label>
                     <input value={form.address.province} onChange={(e) => setAddress('province', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                       placeholder="ON" />
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export default function OnboardingPage() {
                     <input
                       value={(form.hours as any)[day]}
                       onChange={(e) => setForm((f) => ({ ...f, hours: { ...f.hours, [day]: e.target.value } }))}
-                      className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                     />
                   </div>
                 ))}
