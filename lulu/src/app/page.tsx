@@ -8,7 +8,7 @@ export default function LandingPage() {
       <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
         <div className="text-xl font-bold text-purple-400">lulu</div>
         <div className="flex items-center gap-4">
-          <Link href="/sign-in" className="text-sm text-gray-400 hover:text-white transition">
+          <Link href="/auth/login" className="text-sm text-gray-400 hover:text-white transition">
             Sign in
           </Link>
           <Link

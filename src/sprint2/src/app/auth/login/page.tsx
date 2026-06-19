@@ -90,5 +90,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-// Made with Bob

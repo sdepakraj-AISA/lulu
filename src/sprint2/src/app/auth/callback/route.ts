@@ -32,5 +32,3 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`);
 }
-
-// Made with Bob
