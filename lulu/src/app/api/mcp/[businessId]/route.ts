@@ -43,15 +43,7 @@ export async function POST(
     );
   }
 
-  // 4. Check business is active
-  if (!business.is_active) {
-    return NextResponse.json(
-      { jsonrpc: '2.0', id: null, error: { code: -32003, message: 'Business is not active' } },
-      { status: 403 }
-    );
-  }
-
-  // 5. Parse JSON-RPC request
+  // 4. Parse JSON-RPC request
   let mcpRequest;
   try {
     mcpRequest = await request.json();
@@ -62,22 +54,15 @@ export async function POST(
     );
   }
 
-  // 6. Fetch active connectors for this business
+  // 5. Fetch active connectors for this business
   const { data: connectors } = await supabase
     .from('connectors')
     .select('*')
     .eq('business_id', business.id)
     .eq('status', 'connected');
 
-  // 7. Handle the MCP request
+  // 6. Handle the MCP request
   const response = await handleMcpRequest(mcpRequest, business, connectors ?? []);
-
-  // 8. Log registry query count (fire and forget)
-  void supabase
-    .from('registry')
-    .update({ total_queries: supabase.rpc('increment') })
-    .eq('business_id', business.id)
-    .then(() => {}, () => {});
 
   return NextResponse.json(response, {
     headers: {
@@ -99,3 +84,5 @@ export async function OPTIONS() {
     },
   });
 }
+
+// Made with Bob
