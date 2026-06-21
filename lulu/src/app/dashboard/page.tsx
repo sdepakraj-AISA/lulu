@@ -130,7 +130,10 @@ export default async function DashboardPage({
                       Free plan is not listed in the registry. Starter ($49/mo) gets you found by Claude, ChatGPT, and Gemini.
                     </p>
                   </div>
-                  <a href={'/upgrade?businessId=' + biz.id} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap ml-4 hover:bg-indigo-700">Upgrade →</a>
+                  <a href={`/upgrade?businessId=${biz.id}`}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap ml-4 hover:bg-indigo-700">
+                    Upgrade →
+                  </a>
                 </div>
               )}
 
