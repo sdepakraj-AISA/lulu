@@ -23,56 +23,106 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get('limit') ?? '10'), 50);
   const offset = parseInt(searchParams.get('offset') ?? '0');
 
-  // Build query — only return listed businesses
-  let dbQuery = supabase
+  // Fetch all registry entries with related data
+  const { data: registryData, error: registryError } = await supabase
     .from('registry')
-    .select(`
-      *,
-      business:businesses!inner(
-        id, name, slug, description, category,
-        website, phone, email, address, hours, plan, registry_listed
-      ),
-      mcp_server:mcp_servers(endpoint_url, build_status)
-    `)
-    .eq('businesses.registry_listed', true)
-    .eq('mcp_servers.build_status', 'live')
-    .order('quality_score', { ascending: false })
-    .range(offset, offset + limit - 1);
+    .select('*')
+    .order('quality_score', { ascending: false });
 
-  // Simple name search using ilike
-  if (query) {
-    dbQuery = dbQuery.ilike('businesses.name', `%${query}%`);
-  }
-
-  // Category filter
-  if (category) {
-    dbQuery = dbQuery.eq('category', category);
-  }
-
-  // City filter
-  if (city) {
-    dbQuery = dbQuery.contains('location', { city });
-  }
-
-  // Capability filter
-  if (capability) {
-    dbQuery = dbQuery.contains('capabilities', [capability]);
-  }
-
-  const { data, error, count } = await dbQuery;
-
-  if (error) {
-    console.error('[Registry Search] Error:', error);
+  if (registryError) {
+    console.error('[Registry Search] Error fetching registry:', registryError);
     return NextResponse.json(
       { error: 'Registry search failed' },
       { status: 500 }
     );
   }
 
+  // Fetch all businesses
+  const { data: businessesData, error: businessesError } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('registry_listed', true);
+
+  if (businessesError) {
+    console.error('[Registry Search] Error fetching businesses:', businessesError);
+    return NextResponse.json(
+      { error: 'Registry search failed' },
+      { status: 500 }
+    );
+  }
+
+  // Fetch all MCP servers
+  const { data: mcpServersData, error: mcpServersError } = await supabase
+    .from('mcp_servers')
+    .select('*')
+    .eq('build_status', 'live');
+
+  if (mcpServersError) {
+    console.error('[Registry Search] Error fetching MCP servers:', mcpServersError);
+    return NextResponse.json(
+      { error: 'Registry search failed' },
+      { status: 500 }
+    );
+  }
+
+  // Create lookup maps
+  const businessMap = new Map(businessesData?.map(b => [b.id, b]) ?? []);
+  const mcpServerMap = new Map(mcpServersData?.map(m => [m.business_id, m]) ?? []);
+
+  // Join data in JavaScript and apply filters
+  let results = (registryData ?? [])
+    .map(entry => {
+      const business = businessMap.get(entry.business_id);
+      const mcpServer = mcpServerMap.get(entry.business_id);
+      
+      if (!business || !mcpServer) return null;
+      
+      return {
+        ...entry,
+        business,
+        mcp_server: mcpServer,
+      };
+    })
+    .filter(entry => entry !== null);
+
+  // Apply filters in JavaScript
+  if (query) {
+    const lowerQuery = query.toLowerCase();
+    results = results.filter(entry =>
+      entry.business.name?.toLowerCase().includes(lowerQuery) ||
+      entry.business.description?.toLowerCase().includes(lowerQuery)
+    );
+  }
+
+  if (category) {
+    results = results.filter(entry => entry.category === category);
+  }
+
+  if (city) {
+    results = results.filter(entry => entry.location?.city === city);
+  }
+
+  if (capability) {
+    results = results.filter(entry =>
+      entry.capabilities?.includes(capability)
+    );
+  }
+
+  // Apply pagination
+  const total = results.length;
+  const data = results.slice(offset, offset + limit);
+
+  if (!data) {
+    return NextResponse.json(
+      { error: 'No results found' },
+      { status: 404 }
+    );
+  }
+
   // Log registry query (fire and forget)
   const agentName = detectAgent(request.headers.get('user-agent') ?? '');
   supabase.from('analytics_events').insert(
-    (data ?? []).map((entry) => ({
+    data.map((entry) => ({
       business_id: entry.business_id,
       event_type: 'registry_query',
       agent_name: agentName,
@@ -81,12 +131,12 @@ export async function GET(request: NextRequest) {
   ).then(() => {}, () => {});
 
   const result: RegistrySearchResult = {
-    businesses: (data ?? []).map((entry) => ({
+    businesses: data.map((entry) => ({
       ...entry,
       business: entry.business as any,
-      endpoint_url: (entry.mcp_server as any)?.endpoint_url ?? '',
+      endpoint_url: entry.mcp_server?.endpoint_url ?? '',
     })),
-    total: count ?? 0,
+    total,
     query,
   };
 
