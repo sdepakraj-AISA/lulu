@@ -35,17 +35,13 @@ export async function GET(request: NextRequest) {
       mcp_server:mcp_servers(endpoint_url, build_status)
     `)
     .eq('businesses.registry_listed', true)
-    .eq('businesses.is_active', true)
     .eq('mcp_servers.build_status', 'live')
     .order('quality_score', { ascending: false })
     .range(offset, offset + limit - 1);
 
-  // Full-text search
+  // Simple name search using ilike
   if (query) {
-    dbQuery = dbQuery.textSearch('search_vector', query, {
-      type: 'websearch',
-      config: 'english',
-    });
+    dbQuery = dbQuery.ilike('businesses.name', `%${query}%`);
   }
 
   // Category filter
