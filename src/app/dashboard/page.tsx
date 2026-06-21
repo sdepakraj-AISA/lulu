@@ -1,7 +1,6 @@
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import UpgradeButton from './UpgradeButton';
 
 export const revalidate = 60;
 
@@ -131,7 +130,7 @@ export default async function DashboardPage({
                       Free plan is not listed in the registry. Starter ($49/mo) gets you found by Claude, ChatGPT, and Gemini.
                     </p>
                   </div>
-                  <UpgradeButton businessId={biz.id} />
+                  <a href={'/upgrade?businessId=' + biz.id} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap ml-4 hover:bg-indigo-700">Upgrade →</a>
                 </div>
               )}
 
