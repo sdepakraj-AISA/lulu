@@ -21,12 +21,30 @@ export async function POST(
   const authHeader = request.headers.get('authorization');
   const apiKey = authHeader?.replace('Bearer ', '').trim();
 
-  // 2. Look up business by slug or ID
-  const { data: business, error: bizError } = await supabase
+  // 2. Look up business by slug or ID (try slug first, then UUID)
+  let business;
+  let bizError;
+  
+  // First try by slug
+  const { data: businessBySlug, error: slugError } = await supabase
     .from('businesses')
     .select('*')
-    .or(`slug.eq.${businessId},id.eq.${businessId}`)
+    .eq('slug', businessId)
     .single();
+  
+  if (businessBySlug) {
+    business = businessBySlug;
+  } else {
+    // If not found by slug, try by UUID
+    const { data: businessById, error: idError } = await supabase
+      .from('businesses')
+      .select('*')
+      .eq('id', businessId)
+      .single();
+    
+    business = businessById;
+    bizError = idError;
+  }
 
   if (bizError || !business) {
     return NextResponse.json(
