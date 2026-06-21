@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
             category: business.category,
             location: business.address,
             capabilities: getCapabilities(business.category),
-            quality_score: 100,
+            quality_score: 99.99,
             listed_at: new Date().toISOString(),
           }, { onConflict: 'business_id' });
       }
