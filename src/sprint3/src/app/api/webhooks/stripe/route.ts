@@ -6,8 +6,6 @@ import { createServiceRoleClient } from '@/lib/supabase/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' });
 
-export const runtime = 'nodejs';
-
 export async function POST(request: NextRequest) {
   const body = await request.text();
   const sig = request.headers.get('stripe-signature')!;
@@ -81,3 +79,5 @@ function getCapabilities(category: string): string[] {
   }
   return ['get_business_info', 'get_services', 'get_availability', 'create_booking'];
 }
+
+export const config = { api: { bodyParser: false } };
